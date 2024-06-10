@@ -1,0 +1,34 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Buy groceries",
+      "isCompleted": false
+    },
+    {
+      "id": "2",
+      "title": "Finish project proposal",
+      "isCompleted": true
+    },
+    {
+      "id": "fe43c5d9-ceff-4784-9c1c-716775eeadc9",
+      "title": "Call mom",
+      "isCompleted": false
+    },
+    {
+      "id": "cd04111c-d830-4b51-b44e-adf22d56d552",
+      "title": "hello",
+      "isCompleted": false
+    },
+    {
+      "id": "4c37a20a-825d-4bbf-8371-d491e5098a26",
+      "title": "hi",
+      "isCompleted": false
+    },
+    {
+      "id": "8fa2b317-b71f-455f-907a-2548658c5e1c",
+      "title": "ooo",
+      "isCompleted": false
+    }
+  ]
+}
