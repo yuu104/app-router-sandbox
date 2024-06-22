@@ -15,7 +15,7 @@ export default function Home() {
       <div className="flex-1 p-6 space-y-4">
         <AddTaskForm />
         <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4 space-y-2">
-          <Suspense key={Math.random()} fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading...</div>}>
             <TaskList />
           </Suspense>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useOptimistic, useState } from "react";
 import { Task } from "@/types/task";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,16 +15,23 @@ type Props = {
 
 export function TaskItem({ task }: Props) {
   const router = useRouter();
+
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(task.title);
 
+  const [optimisticTask, addOptimistic] = useOptimistic<Task | undefined>(task);
+  optimisticTask?.title === "Call mom" && console.log(optimisticTask);
+
   const handleToggleDoneTask = async () => {
     const body: Task = { ...task, isCompleted: !task.isCompleted };
-    await fetch(`http://localhost:3001/tasks/${task.id}`, {
-      method: "PUT",
-      body: JSON.stringify(body),
+    startTransition(async () => {
+      addOptimistic(body);
+      await fetch(`http://localhost:3001/tasks/${task.id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
+      router.refresh();
     });
-    router.refresh();
   };
 
   const handleEditButtonClick = () => {
@@ -35,24 +42,32 @@ export function TaskItem({ task }: Props) {
     setIsEditingTitle(false);
     if (task.title === editedTitle) return;
     const body: Task = { ...task, title: editedTitle };
-    await fetch(`http://localhost:3001/tasks/${task.id}`, {
-      method: "PUT",
-      body: JSON.stringify(body),
+    startTransition(async () => {
+      addOptimistic(body);
+      await fetch(`http://localhost:3001/tasks/${task.id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
+      router.refresh();
     });
-    router.refresh();
   };
 
   const handleDeleteTask = async () => {
-    await fetch(`http://localhost:3001/tasks/${task.id}`, {
-      method: "DELETE",
+    startTransition(async () => {
+      addOptimistic(undefined);
+      await fetch(`http://localhost:3001/tasks/${task.id}`, {
+        method: "DELETE",
+      });
+      router.refresh();
     });
-    router.refresh();
   };
+
+  if (!optimisticTask) return null;
 
   return (
     <div className="flex items-center space-x-4">
       <Checkbox
-        checked={task.isCompleted}
+        checked={optimisticTask.isCompleted}
         onCheckedChange={handleToggleDoneTask}
       />
       {isEditingTitle ? (
@@ -65,10 +80,10 @@ export function TaskItem({ task }: Props) {
       ) : (
         <label
           className={`flex-1 text-gray-800 dark:text-gray-200 ${
-            task.isCompleted ? "line-through" : ""
+            optimisticTask.isCompleted ? "line-through" : ""
           }`}
         >
-          {task.title}
+          {optimisticTask.title}
         </label>
       )}
       {isEditingTitle ? (
